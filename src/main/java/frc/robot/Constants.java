@@ -34,6 +34,11 @@ public final class Constants {
     public static final int LeftWinchMotorCAN_Address = 17;
     public static final int RightWinchMotorCAN_Address = 18;
 
+    public static final int driveLeftTalon = 17;
+    public static final int driveRightTalon = 4;
+    public static final int driveLeftVictor = 3;
+    public static final int driveRightVictor = 5;
+
 
 
     //PDP Ports

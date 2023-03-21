@@ -57,6 +57,10 @@
     public void holdCone() {
      intakeMotor.set(-0.25);
     }
+
+    public void setZero() {
+      intakeMotor.set(0);
+    }
  
     public void setIntakeMotorLevel(double mLevel) { //runs storage if intaking
       intakeMotor.set(mLevel);

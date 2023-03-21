@@ -5,11 +5,18 @@
 package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import frc.robot.commands.Arm.*;
+import frc.robot.commands.Intake.*;
+import frc.robot.OI.*;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.DriveBase;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -19,6 +26,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import java.beans.Encoder;
 import java.lang.Math;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.hal.simulation.PowerDistributionDataJNI;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.Joystick;
@@ -39,6 +47,9 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private static PowerDistribution m_PDP;
+  DriveBase m_drive;
+  OI oi;
+  private Command m_autonomousCommand;
 
   /*
    * Drive motor controller instances.
@@ -47,10 +58,7 @@ public class Robot extends TimedRobot {
    * Change kBrushed to kBrushless if you are using NEO's.
    * Use the appropriate other class if you are using different controllers.
    */
-  WPI_TalonSRX driveLeftTalon = new WPI_TalonSRX(2);
-  WPI_TalonSRX driveRightTalon = new WPI_TalonSRX(3);
-  VictorSPX driveLeftVictor = new VictorSPX(4);
-  VictorSPX driveRightVictor = new VictorSPX(5);
+
   
   Encoder leftTalonEncoder = new Encoder();
   Encoder rightTalonEncoder = new Encoder();
@@ -60,40 +68,7 @@ public class Robot extends TimedRobot {
 
   SlewRateLimiter filter = new SlewRateLimiter(0.5, -0.5, 0);
 
-  double p = driveLeftTalon.getSelectedSensorPosition();
   
-
-  public void zeroDriveSensors() {
-    //if (m_isActive == false) {
-    //  return;
-    //}
-    driveLeftTalon.setSelectedSensorPosition(0);
-    driveRightTalon.setSelectedSensorPosition(0);
-    // if (gyro) {
-    //   Gyro.getInstance();
-    //   Gyro.reset();
-    // }
-  }
-  public double getLeftEncoder() {
-    // if (m_isActive == false) {
-    //   return 0;
-    // }
-    return driveLeftTalon.getSelectedSensorPosition() / 10.75;
-  }
-  public double getRightEncoder() {
-    // if (m_isActive == false) {
-    //   return 0;
-    // }
-    return driveRightTalon.getSelectedSensorPosition() / 10.75;
-  }
-
-  public double getLeftDistanceInches() {
-    return getLeftEncoder() * Constants.DriveBaseWheelDiameter * Math.PI;
-  }
-  public double getRightDistanceInches() {
-    return getRightEncoder() * Constants.DriveBaseWheelDiameter * Math.PI;
-  }
-
   public static PowerDistribution getPDP() {
     if (m_PDP == null) {
       m_PDP = new PowerDistribution();
@@ -123,8 +98,6 @@ public class Robot extends TimedRobot {
    * mode (switch set to X on the bottom) or a different controller
    * that you feel is more comfortable.
    */
-  Joystick j = new Joystick(0);
-  Joystick k = new Joystick(1);
   /*
    * Magic numbers. Use these to adjust settings.
    */
@@ -190,6 +163,9 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("cube and mobility", kCubeAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
+    CameraServer.startAutomaticCapture();
+    CommandScheduler.getInstance().cancelAll();
+
     /*
      * You will need to change some of these from false to true.
      * 
@@ -201,20 +177,20 @@ public class Robot extends TimedRobot {
     // driveLeftVictor.follow(driveLeftTalon);
     // driveRightTalon.setCANTimeout(100);
     // driveRightVictor.follow(driveRightTalon);
-    driveLeftTalon.enableCurrentLimit(true);
-    driveLeftTalon.configContinuousCurrentLimit(30);
-    driveLeftVictor.follow(driveLeftTalon);
-    driveRightTalon.enableCurrentLimit(true);
-    driveRightTalon.configContinuousCurrentLimit(30);
-    driveRightVictor.follow(driveRightTalon);
+    // driveLeftTalon.enableCurrentLimit(true);
+    // driveLeftTalon.configContinuousCurrentLimit(30);
+    // driveLeftVictor.follow(driveLeftTalon);
+    // driveRightTalon.enableCurrentLimit(true);
+    // driveRightTalon.configContinuousCurrentLimit(30);
+    // driveRightVictor.follow(driveRightTalon);
     // driveLeftTalon.setOpenLoopRampRate(0.1);
     // driveLeftVictor.setOpenLoopRampRate(0.1);
     // driveRightTalon.setOpenLoopRampRate(0.1);
     // driveRightVictor.setOpenLoopRampRate(0.1);
-    driveLeftTalon.setInverted(false);
-    driveLeftVictor.setInverted(false);
-    driveRightTalon.setInverted(false);
-    driveRightVictor.setInverted(false);
+    // driveLeftTalon.setInverted(false);
+    // driveLeftVictor.setInverted(false);
+    // driveRightTalon.setInverted(false);
+    // driveRightVictor.setInverted(false);
     //driveLeftTalon.
     
     
@@ -253,10 +229,7 @@ public class Robot extends TimedRobot {
 
     // see note above in robotInit about commenting these out one by one to set
     // directions.
-    driveLeftTalon.set(-left);
-    driveLeftVictor.follow(driveLeftTalon);
-    driveRightTalon.set(right);
-    driveRightVictor.follow(driveRightTalon);
+    
   }
 
   /**
@@ -292,6 +265,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     SmartDashboard.putNumber("Time (seconds)", Timer.getFPGATimestamp());
+    CommandScheduler.getInstance().run();
   }
 
   double autonomousStartTime;
@@ -299,20 +273,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    zeroDriveSensors();
-    driveLeftTalon.setNeutralMode(NeutralMode.Brake);
-    driveLeftVictor.follow(driveLeftTalon);
-    driveRightTalon.setNeutralMode(NeutralMode.Brake);
-    driveRightVictor.follow(driveRightTalon);
+
+    CommandScheduler.getInstance().schedule(m_autonomousCommand);
+    //zeroDriveSensors();
 
     //armMotor.set(0.4);
     //intakeMotor.set(1);
-
-    driveLeftTalon.set(0.3);
-    driveLeftVictor.follow(driveLeftTalon);
-    driveRightTalon.set(-0.3);
-    driveRightVictor.follow(driveRightTalon);
-
     
         // m_autoSelected = m_chooser.getSelected();
     // System.out.println("Auto selected: " + m_autoSelected);
@@ -328,20 +294,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    double leftInches = Math.abs(getLeftDistanceInches());
-    double rightInches = Math.abs(getRightDistanceInches());
 
-    SmartDashboard.putNumber("LeftInches: ", leftInches);
-    SmartDashboard.putNumber("RightInches: ", rightInches);
-
-    double averageInches = (leftInches + rightInches) / 2;
-    if (averageInches > 66) 
-    {
-      driveLeftTalon.set(0);
-      driveLeftVictor.follow(driveLeftTalon);
-      driveRightTalon.set(0);
-      driveRightVictor.follow(driveRightTalon);
-    }
     // if (m_autoSelected == kNothingAuto) {
     //   setArmMotor(0.0);
     //   setIntakeMotor(0.0, INTAKE_CURRENT_LIMIT_A);
@@ -384,11 +337,18 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    zeroDriveSensors();
-    driveLeftTalon.setNeutralMode(NeutralMode.Brake);
-    driveLeftVictor.follow(driveLeftTalon);
-    driveRightTalon.setNeutralMode(NeutralMode.Brake);
-    driveRightVictor.follow(driveRightTalon);
+
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
+    CommandScheduler.getInstance().cancelAll();
+
+    armMotor.setSelectedSensorPosition(0);
+    // zeroDriveSensors();
+    // driveLeftTalon.setNeutralMode(NeutralMode.Brake);
+    // driveLeftVictor.follow(driveLeftTalon);
+    // driveRightTalon.setNeutralMode(NeutralMode.Brake);
+    // driveRightVictor.follow(driveRightTalon);
 
     lastGamePiece = NOTHING;
   }
@@ -396,85 +356,89 @@ double armEncoder;
 boolean lastPressed;
   @Override
   public void teleopPeriodic() {
-    double armPower;
-    if (j.getRawButton(7)) {
-      // lower the arm
-      armPower = -ARM_OUTPUT_POWER;
-    } else if (j.getRawButton(5)) {
-      // raise the arm
-      armPower = ARM_OUTPUT_POWER;
-    } else {
-      // do nothing and let it sit where it is
-      armPower = 0.0;
-    }
-    setArmMotor(armPower);
-    boolean aVar = k.getRawButton(5);
-    boolean oaVar = k.getRawButton(6);
-    boolean iVar = k.getRawButton(7);
-    boolean oiVar = k.getRawButton(8);
 
-    intakeMotor.setNeutralMode(NeutralMode.Brake);
-    armMotor.setNeutralMode(NeutralMode.Brake);
+    DriveBase.getInstance().driveMotors(OI.getInstance().j.getRawAxis(1),OI.getInstance().j.getRawAxis(2));
 
-    if (iVar) {
-      intakeMotor.set(1);
-    } else if (oiVar) {
-      intakeMotor.set(-1);
-    } else {
-      intakeMotor.set(0);
-    }
-    if (aVar) {
-      armMotor.set(0.4);
-      armEncoder = armMotor.getSelectedSensorPosition();
-      SmartDashboard.putNumber("distance", armEncoder);
-    } else if (oaVar) {
-      armMotor.set(-0.4);
-      armEncoder = armMotor.getSelectedSensorPosition();
-      SmartDashboard.putNumber("distance", armEncoder);
-    } else {
-      armMotor.set(0);
-    }
-    iVar = false;
-    oiVar = false;
-    aVar = false;
-    oaVar = false;
+
+    // double armPower;
+    // if (j.getRawButton(7)) {
+    //   // lower the arm
+    //   armPower = -ARM_OUTPUT_POWER;
+    // } else if (j.getRawButton(5)) {
+    //   // raise the arm
+    //   armPower = ARM_OUTPUT_POWER;
+    // } else {
+    //   // do nothing and let it sit where it is
+    //   armPower = 0.0;
+    // }
+    // setArmMotor(armPower);
+    // boolean aVar = k.getRawButton(5);
+    // boolean oaVar = k.getRawButton(6);
+    // boolean iVar = k.getRawButton(7);
+    // boolean oiVar = k.getRawButton(8);
+
+    // intakeMotor.setNeutralMode(NeutralMode.Brake);
+    // armMotor.setNeutralMode(NeutralMode.Brake);
+
+    // if (iVar) {
+    //   intakeMotor.set(1);
+    // } else if (oiVar) {
+    //   intakeMotor.set(-1);
+    // } else {
+    //   intakeMotor.set(0);
+    // }
+    // if (aVar) {
+    //   armMotor.set(0.4);
+    //   armEncoder = armMotor.getSelectedSensorPosition();
+    //   SmartDashboard.putNumber("distance", armEncoder);
+    // } else if (oaVar) {
+    //   armMotor.set(-0.4);
+    //   armEncoder = armMotor.getSelectedSensorPosition();
+    //   SmartDashboard.putNumber("distance", armEncoder);
+    // } else {
+    //   armMotor.set(0);
+    // }
+    // iVar = false;
+    // oiVar = false;
+    // aVar = false;
+    // oaVar = false;
   
-    double intakePower;
-    int intakeAmps;
-    if (j.getRawButton(8)) {
-      // cube in or cone out
-      intakePower = INTAKE_OUTPUT_POWER;
-      intakeAmps = INTAKE_CURRENT_LIMIT_A;
-      lastGamePiece = CUBE;
-    } else if (j.getRawButton(6)) {
-      // cone in or cube out
-      intakePower = -INTAKE_OUTPUT_POWER;
-      intakeAmps = INTAKE_CURRENT_LIMIT_A;
-      lastGamePiece = CONE;
-    } else if (lastGamePiece == CUBE) {
-      intakePower = INTAKE_HOLD_POWER;
-      intakeAmps = INTAKE_HOLD_CURRENT_LIMIT_A;
-    } else if (lastGamePiece == CONE) {
-      intakePower = -INTAKE_HOLD_POWER;
-      intakeAmps = INTAKE_HOLD_CURRENT_LIMIT_A;
-    } else {
-      intakePower = 0.0;
-      intakeAmps = 0;
-    }
-    setIntakeMotor(intakePower, intakeAmps);
+    // double intakePower;
+    // int intakeAmps;
+    // if (j.getRawButton(8)) {
+    //   // cube in or cone out
+    //   intakePower = INTAKE_OUTPUT_POWER;
+    //   intakeAmps = INTAKE_CURRENT_LIMIT_A;
+    //   lastGamePiece = CUBE;
+    // } else if (j.getRawButton(6)) {
+    //   // cone in or cube out
+    //   intakePower = -INTAKE_OUTPUT_POWER;
+    //   intakeAmps = INTAKE_CURRENT_LIMIT_A;
+    //   lastGamePiece = CONE;
+    // } else if (lastGamePiece == CUBE) {
+    //   intakePower = INTAKE_HOLD_POWER;
+    //   intakeAmps = INTAKE_HOLD_CURRENT_LIMIT_A;
+    // } else if (lastGamePiece == CONE) {
+    //   intakePower = -INTAKE_HOLD_POWER;
+    //   intakeAmps = INTAKE_HOLD_CURRENT_LIMIT_A;
+    // } else {
+    //   intakePower = 0.0;
+    //   intakeAmps = 0;
+    // }
+    // setIntakeMotor(intakePower, intakeAmps);
  
-    /*
-     * Negative signs here because the values from the analog sticks are backwards
-     * from what we want. Forward returns a negative when we want it positive.
-     */
-    double x =  -j.getRawAxis(1);
-    double y =  j.getRawAxis(2);
-    x = (x>0?1:-1) * x * x;
-    y = (y>0?1:-1) * y * y;
-    //y *= 0.7;
+    // /*
+    //  * Negative signs here because the values from the analog sticks are backwards
+    //  * from what we want. Forward returns a negative when we want it positive.
+    //  */
+    // double x =  -j.getRawAxis(1);
+    // double y =  j.getRawAxis(2);
+    // x = (x>0?1:-1) * x * x;
+    // y = (y>0?1:-1) * y * y;
+    // //y *= 0.7;
 
-    //x = filter.calculate(x);
+    // //x = filter.calculate(x);
 
-    setDriveMotors(x,y);
+    // setDriveMotors(x,y);
   }
 }
