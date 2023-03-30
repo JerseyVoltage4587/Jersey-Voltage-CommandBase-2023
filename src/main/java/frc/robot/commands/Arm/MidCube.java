@@ -5,11 +5,15 @@
 package frc.robot.commands.Arm;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Arm;
 
 public class MidCube extends CommandBase {
+  Arm m_arm;
   /** Creates a new MidCube. */
   public MidCube() {
+    m_arm = Arm.getInstance();
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(m_arm);
   }
 
   // Called when the command is initially scheduled.
@@ -18,7 +22,9 @@ public class MidCube extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    m_arm.midCube();
+  }
 
   // Called once the command ends or is interrupted.
   @Override

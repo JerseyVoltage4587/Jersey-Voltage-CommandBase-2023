@@ -8,13 +8,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.Arm.ArmInside;
-import frc.robot.commands.Arm.ArmOutside;
 import frc.robot.commands.Arm.HighCone;
 import frc.robot.commands.Arm.HighCube;
 import frc.robot.commands.Arm.MidCone;
 import frc.robot.commands.Arm.MidCube;
-import frc.robot.commands.Arm.PIDMidCube;
 import frc.robot.commands.Arm.SetArmPositionZero;
 import frc.robot.commands.Intake.*;
 import frc.robot.subsystems.DriveBase;
@@ -65,15 +62,13 @@ public class OI extends CommandBase {
     kRightTrigger.whileTrue(new CubeOut());
     kMinusButton.onTrue(new HoldCone());
     kPlusButton.onTrue(new HoldCube());
-    kLeftBumper.whileTrue(new ArmOutside());
-    kRightBumper.whileTrue(new ArmInside());
-    //kRightStickButton.whileTrue(new SetArmPositionZero());
-    //kButtonB.whileTrue(new MidCone());
-    //kButtonX.whileTrue(new HighCone());
-    //kButtonY.whileTrue(new MidCube());
-    //kButtonA.whileTrue(new HighCube());
-    kButtonB.toggleOnTrue(new PIDMidCube());
-
+    // kLeftBumper.whileTrue(new ArmOutside());
+    // kRightBumper.whileTrue(new ArmInside());
+    // kRightStickButton.whileTrue(new SetArmPositionZero());
+    // kButtonB.whileTrue(new MidCone());
+    // kButtonX.whileTrue(new HighCone());
+    // kButtonY.whileTrue(new MidCube());
+    // kButtonA.whileTrue(new HighCube());
   }
 
   public static OI getInstance() {

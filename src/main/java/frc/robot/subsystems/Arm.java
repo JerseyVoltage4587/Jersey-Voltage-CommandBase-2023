@@ -33,11 +33,15 @@ public class Arm extends SubsystemBase {
     armMotor.configFactoryDefault();
     armMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     armMotor.setSensorPhase(true);
-    // armMotor.configMotionCruiseVelocity(Constants.kCruiseVelocity, 30);
-    // armMotor.configMotionAcceleration(Constants.kCruiseAcceleration, 30);
-    // armMotor.set(ControlMode.MotionMagic, 25000);
-    //armMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
-    //armMotor.setSelectedSensorPosition(0);
+    armMotor.configMotionCruiseVelocity(Constants.kCruiseVelocity);
+    armMotor.configMotionAcceleration(Constants.kCruiseAcceleration);
+    armMotor.config_kP(0, Constants.kP);
+    armMotor.config_kI(0, Constants.kI);
+    armMotor.config_kD(0, Constants.kD);
+    armMotor.config_kF(0, Constants.kF);
+    armMotor.set(ControlMode.MotionMagic, 25000);
+    armMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+    armMotor.setSelectedSensorPosition(0);
 
     m_Encoder = new Encoder(0, 1, true, Encoder.EncodingType.k2X);
   }
@@ -53,38 +57,28 @@ public class Arm extends SubsystemBase {
     return Instance;
   }
 
-  public void armInside() {
-    armMotor.set(-0.4);
-  }
+  // public void armInside() {
+  //   armMotor.set(-0.4);
+  // }
 
-  public void armOutside() {
-    armMotor.set(0.4);
-  }
+  // public void armOutside() {
+  //   armMotor.set(0.4);
+  // }
 
   public void midCone() {
-    // if (m_controller.k.getRawButton(2)) {
-    //   double targetPos = OI.getInstance().k.getRawAxis(1) * 4096 * 10.0;
-    //   armMotor.set(ControlMode.MotionMagic, targetPos);
-
-    //   System.out.println("*****");
-    //   System.out.println(targetPos);
-    //   System.out.println(armMotor.getClosedLoopError(0));
-
-    // } else {
-    //   armMotor.set(ControlMode.PercentOutput, OI.getInstance().k.getRawAxis(1));
-    // }
+    armMotor.set(ControlMode.MotionMagic, 26000);
   }
 
   public void midCube() {
-    // armMotor.set(ControlMode.MotionMagic, );
+    armMotor.set(ControlMode.MotionMagic, 25000);
   }
 
   public void highCone() {
-    //armMotor.set(ControlMode.MotionMagic, );
+    armMotor.set(ControlMode.MotionMagic, 26000);
   }
 
   public void highCube() {
-    //armMotor.set(ControlMode.MotionMagic, );
+    armMotor.set(ControlMode.MotionMagic, 25000);
   }
 
   public void setArmPositionZero() {

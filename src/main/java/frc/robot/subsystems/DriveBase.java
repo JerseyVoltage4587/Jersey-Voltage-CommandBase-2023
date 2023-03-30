@@ -39,8 +39,6 @@ public class DriveBase extends SubsystemBase {
   private double RightMotorLevel;
   private double partialLeftInches = 0;
   private double partialRightInches = 0;
-  private DriveBaseLoggingData m_loggingData;
-  private AsyncStructuredLogger<DriveBaseLoggingData> m_logger;
   private long m_lastLogTime = 0;
   private String layout = "";
 
@@ -83,8 +81,6 @@ public class DriveBase extends SubsystemBase {
     driveRightTalon.configOpenloopRamp(0.1);
     m_drive = new DifferentialDrive(driveLeftTalon, driveRightTalon);
     m_drive.setSafetyEnabled(false);
-    m_loggingData = new DriveBaseLoggingData();
-    m_logger = new AsyncStructuredLogger<DriveBaseLoggingData>("DriveBase", /*forceUnique=*/false, DriveBaseLoggingData.class);
   }
 
   public static DriveBase getInstance() {
@@ -230,68 +226,5 @@ public class DriveBase extends SubsystemBase {
     driveLeftVictor.follow(driveLeftTalon);
     driveRightTalon.set(right);
     driveRightVictor.follow(driveRightTalon);
-  }
-
-  @Override
-  public void periodic() {
-    if (m_isActive == false) {
-      return;
-    }
-
-
-
-    // This method will be called once per scheduler run
-    long now = System.nanoTime();
-    double lastLeftPosition = m_loggingData.LeftPosition;
-    double lastLeftVelocity = m_loggingData.LeftVelocity;
-    double lastRightPosition = m_loggingData.RightPosition;
-    double lastRightVelocity = m_loggingData.RightVelocity;
-
-    m_loggingData.LeftMotorLevel = driveLeftTalon.get();
-    m_loggingData.LeftMotor1_SupplyCurrent = driveLeftTalon.getOutputCurrent();
-    m_loggingData.LeftMotor2_SupplyCurrent = Robot.getPDP().getCurrent(Constants.LeftSpark11PDP_Port);
-    m_loggingData.LeftEncoderReading = getLeftEncoder();
-    m_loggingData.LeftPosition = getLeftDistanceInches();
-    m_loggingData.LeftVelocity = getRateOfChange(lastLeftPosition, m_loggingData.LeftPosition, m_lastLogTime, now);
-    m_loggingData.LeftAcceleration = getRateOfChange(lastLeftVelocity, m_loggingData.LeftVelocity, m_lastLogTime, now);
-
-    m_loggingData.RightMotorLevel = driveRightTalon.get();
-    m_loggingData.RightMotor1_SupplyCurrent = driveRightTalon.getOutputCurrent();
-    m_loggingData.RightMotor2_SupplyCurrent = Robot.getPDP().getCurrent(Constants.RightSpark21PDP_Port);
-    m_loggingData.RightEncoderReading = getRightEncoder();
-    m_loggingData.RightPosition = getRightDistanceInches();
-    m_loggingData.RightVelocity = getRateOfChange(lastRightPosition, m_loggingData.RightPosition, m_lastLogTime, now);
-    m_loggingData.RightAcceleration = getRateOfChange(lastRightVelocity, m_loggingData.RightVelocity, m_lastLogTime, now);
-
-    m_loggingData.Heading = Gyro.getYaw();
-    m_logger.queueData(m_loggingData);
-    m_lastLogTime = now;
-
-    SmartDashboard.putNumber("Left Vel", m_loggingData.LeftEncoderReading);
-    SmartDashboard.putNumber("Right Motor Level", getRightMotorLevel());
-    SmartDashboard.putNumber("Left Motor Level", getLeftMotorLevel());
-    SmartDashboard.putNumber("Left Encoder", getLeftEncoder());
-    SmartDashboard.putNumber("Left Distance", getLeftDistanceInches());
-    SmartDashboard.putNumber("Right Distance", getRightDistanceInches());
-  }
-
-  public static class DriveBaseLoggingData {
-    public double LeftMotorLevel;
-    public double LeftMotor1_SupplyCurrent;
-    public double LeftMotor1_StatorCurrent;
-    public double LeftMotor2_SupplyCurrent;
-    public double LeftEncoderReading;
-    public double LeftPosition;
-    public double LeftVelocity;
-    public double LeftAcceleration;
-    public double RightMotorLevel;
-    public double RightMotor1_SupplyCurrent;
-    public double RightMotor1_StatorCurrent;
-    public double RightMotor2_SupplyCurrent;
-    public double RightEncoderReading;
-    public double RightPosition;
-    public double RightVelocity;
-    public double RightAcceleration;
-    public double Heading;
   }
 }
