@@ -4,14 +4,21 @@
 
 package frc.robot.commands.Arm;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.OI;
 import frc.robot.subsystems.Arm;
 
-public class MidCone extends CommandBase {
+public class PIDMidCube extends CommandBase {
   Arm m_arm;
-  /** Creates a new MidCone. */
-  public MidCone() {
+  OI m_oi;
+
+  /** Creates a new PIDMidCube. */
+  public PIDMidCube() {
     m_arm = Arm.getInstance();
+    m_oi = OI.getInstance();
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_arm);
   }
@@ -23,7 +30,12 @@ public class MidCone extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_arm.midCone();
+    if(m_oi.k.getRawButton(1)) {
+      m_arm.armMotor.set(ControlMode.MotionMagic, 25000);
+      
+    } else {
+      m_arm.armMotor.set(ControlMode.PercentOutput, m_oi.k.getRawAxis(1));
+    }
   }
 
   // Called once the command ends or is interrupted.

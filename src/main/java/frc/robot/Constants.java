@@ -17,6 +17,24 @@ package frc.robot;
  */
 public final class Constants {
     //CAN AddresAses
+
+    public static final int driveLeftTalon = 17;
+    public static final int driveRightTalon = 4;
+    public static final int driveLeftVictor = 3;
+    public static final int driveRightVictor = 5;
+
+    public static final int intakeMotor = 56;
+    public static final int armMotor = 8;
+    
+    public static final double kP = 0.02;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kF = 0.0313;
+    public static final double kCruiseVelocity = 12000;
+    public static final double kCruiseAcceleration = 12000;
+
+
+
     public static final int RightSpark2CAN_Address = 2; //final
     public static final int RightSpark21CAN_Address = 21; //final
     public static final int LeftSpark1CAN_Address = 1; //final
@@ -33,11 +51,6 @@ public final class Constants {
     public static final int PCMCAN_Address = 12; //final
     public static final int LeftWinchMotorCAN_Address = 17;
     public static final int RightWinchMotorCAN_Address = 18;
-
-    public static final int driveLeftTalon = 17;
-    public static final int driveRightTalon = 4;
-    public static final int driveLeftVictor = 3;
-    public static final int driveRightVictor = 5;
 
 
 

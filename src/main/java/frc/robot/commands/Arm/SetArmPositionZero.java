@@ -7,10 +7,10 @@ package frc.robot.commands.Arm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 
-public class MidCone extends CommandBase {
+public class SetArmPositionZero extends CommandBase {
   Arm m_arm;
-  /** Creates a new MidCone. */
-  public MidCone() {
+  /** Creates a new SetZero. */
+  public SetArmPositionZero() {
     m_arm = Arm.getInstance();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_arm);
@@ -18,13 +18,13 @@ public class MidCone extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_arm.setArmPositionZero();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    m_arm.midCone();
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override

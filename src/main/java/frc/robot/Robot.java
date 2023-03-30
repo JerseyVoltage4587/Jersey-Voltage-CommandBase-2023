@@ -5,10 +5,6 @@
 package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import frc.robot.commands.Arm.*;
-import frc.robot.commands.Intake.*;
-import frc.robot.OI.*;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -358,7 +354,7 @@ boolean lastPressed;
   public void teleopPeriodic() {
 
     DriveBase.getInstance().driveMotors(OI.getInstance().j.getRawAxis(1),OI.getInstance().j.getRawAxis(2));
-
+    
 
     // double armPower;
     // if (j.getRawButton(7)) {
