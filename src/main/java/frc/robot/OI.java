@@ -69,6 +69,7 @@ public class OI extends CommandBase {
     // kButtonX.whileTrue(new HighCone());
     // kButtonY.whileTrue(new MidCube());
     // kButtonA.whileTrue(new HighCube());
+    System.out.println("Calling OI Constructor");
   }
 
   public static OI getInstance() {

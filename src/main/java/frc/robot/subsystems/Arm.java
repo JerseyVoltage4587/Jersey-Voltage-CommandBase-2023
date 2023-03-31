@@ -21,14 +21,12 @@ public class Arm extends SubsystemBase {
   private int mode = Constants.IntakeOFF_MODE;
   private boolean deployed = false;
   Encoder m_Encoder;
-  private OI m_controller;
   /** Creates a new Arm. */
   
   public Arm() {
     if (isActive == false) {
       return;
     }
-    m_controller = OI.getInstance();
     armMotor = new WPI_TalonSRX(8);
     armMotor.configFactoryDefault();
     armMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
@@ -39,11 +37,11 @@ public class Arm extends SubsystemBase {
     armMotor.config_kI(0, Constants.kI);
     armMotor.config_kD(0, Constants.kD);
     armMotor.config_kF(0, Constants.kF);
-    armMotor.set(ControlMode.MotionMagic, 25000);
+    // armMotor.set(ControlMode.MotionMagic, 25000);
     armMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
     armMotor.setSelectedSensorPosition(0);
 
-    m_Encoder = new Encoder(0, 1, true, Encoder.EncodingType.k2X);
+    // m_Encoder = new Encoder(0, 1, true, Encoder.EncodingType.k2X);
   }
 
   public static Arm getInstance() {
@@ -92,6 +90,5 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Arm Motor", m_Encoder.getDistance());
   }
 }
