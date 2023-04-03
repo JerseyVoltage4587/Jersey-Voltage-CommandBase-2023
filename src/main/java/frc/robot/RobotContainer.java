@@ -5,9 +5,9 @@
 package frc.robot;
 
 import frc.robot.Constants;
-import frc.robot.commands.Auto.CommunityExitAndStation;
 import frc.robot.commands.Auto.LongCommunityExit;
 import frc.robot.commands.Auto.OnlyStation;
+import frc.robot.commands.Auto.ScoreExitAndStation;
 import frc.robot.commands.Auto.ShortCommunityExit;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -45,7 +45,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    m_chooser.setDefaultOption("Community + Engage", new CommunityExitAndStation());
+    m_chooser.setDefaultOption("Score + Engage", new ScoreExitAndStation());
     m_chooser.addOption("Long Community Exit", new LongCommunityExit());
     m_chooser.addOption("Short Community Exit", new ShortCommunityExit());
     m_chooser.addOption("Engage Only", new OnlyStation());

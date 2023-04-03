@@ -7,10 +7,10 @@ package frc.robot.commands.Intake;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
 
-public class HoldCube extends CommandBase {
-  private Intake m_intake;
-  /** Creates a new HoldCube. */
-  public HoldCube() {
+public class SetIntakeZero extends CommandBase {
+  Intake m_intake;
+  /** Creates a new SetIntakeZero. */
+  public SetIntakeZero() {
     m_intake = Intake.getInstance();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_intake);
@@ -23,14 +23,12 @@ public class HoldCube extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_intake.holdCube();
+    m_intake.setIntakeZero();
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    m_intake.setIntakeZero();
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

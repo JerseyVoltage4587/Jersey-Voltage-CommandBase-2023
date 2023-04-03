@@ -16,6 +16,6 @@ public class OnlyStation extends SequentialCommandGroup {
   public OnlyStation() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new MoveDistance(-66));
+    addCommands(new MoveDistance(114,0.35));
   }
 }

@@ -58,7 +58,7 @@
      intakeMotor.set(-0.25);
     }
 
-    public void setZero() {
+    public void setIntakeZero() {
       intakeMotor.set(0);
     }
  

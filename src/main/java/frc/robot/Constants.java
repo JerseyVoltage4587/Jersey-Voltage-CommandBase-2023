@@ -17,27 +17,36 @@ package frc.robot;
  */
 public final class Constants {
     //CAN AddresAses
-    public static final int RightSpark2CAN_Address = 2; //final
-    public static final int RightSpark21CAN_Address = 21; //final
-    public static final int LeftSpark1CAN_Address = 1; //final
-    public static final int LeftSpark11CAN_Address = 11; //final
-    public static final int LeftShooterMotorCAN_Address = 45; //final
-    public static final int RightShooterMotorCAN_Address = 46; //final
-    public static final int StorageCAN_Address = 3; //final
-    public static final int IntakeMotorCAN_Address = 4; //final
-    public static final int KickerMotorCAN_Address = 5; //final
-    public static final int LeftFrontClimberMotorCAN_Address = 55; //final
-    public static final int RightFrontClimberMotorCAN_Address = 56; //final
-    public static final int LeftBackClimberMotorCAN_Address = 35; //final
-    public static final int RightBackClimberMotorCAN_Address = 36; //final
-    public static final int PCMCAN_Address = 12; //final
-    public static final int LeftWinchMotorCAN_Address = 17;
-    public static final int RightWinchMotorCAN_Address = 18;
-
     public static final int driveLeftTalon = 17;
     public static final int driveRightTalon = 4;
     public static final int driveLeftVictor = 3;
     public static final int driveRightVictor = 5;
+    public static final int driveLeftTalonPDPPort = 14;
+    public static final int driveRightTalonPDPPort = 1;
+    public static final int driveLeftVictorPDPPort = 15;
+    public static final int driveRightVictorPDPPort = 2;
+
+
+
+
+
+    // public static final int RightSpark2CAN_Address = 2; //final
+    // public static final int RightSpark21CAN_Address = 21; //final
+    // public static final int LeftSpark1CAN_Address = 1; //final
+    // public static final int LeftSpark11CAN_Address = 11; //final
+    // public static final int LeftShooterMotorCAN_Address = 45; //final
+    // public static final int RightShooterMotorCAN_Address = 46; //final
+    // public static final int StorageCAN_Address = 3; //final
+    // public static final int IntakeMotorCAN_Address = 4; //final
+    // public static final int KickerMotorCAN_Address = 5; //final
+    // public static final int LeftFrontClimberMotorCAN_Address = 55; //final
+    // public static final int RightFrontClimberMotorCAN_Address = 56; //final
+    // public static final int LeftBackClimberMotorCAN_Address = 35; //final
+    // public static final int RightBackClimberMotorCAN_Address = 36; //final
+    // public static final int PCMCAN_Address = 12; //final
+    // public static final int LeftWinchMotorCAN_Address = 17;
+    // public static final int RightWinchMotorCAN_Address = 18;
+
 
 
 
@@ -62,25 +71,25 @@ public final class Constants {
     //public static final int Module_ID = 0;
 
     //Solenoid Channel
-    public static final int LeftIntakeChannel = 4; //CHANGE THIS IS TEMPORARY 
-    public static final int RightIntakeChannel = 5; //CHANGE THIS IS TEMPORARY 
+    // public static final int LeftIntakeChannel = 4; //CHANGE THIS IS TEMPORARY 
+    // public static final int RightIntakeChannel = 5; //CHANGE THIS IS TEMPORARY 
 
-    public static final int LeftClimberChannel = 2; //CHANGE THIS IS TEMPORARY 
-    public static final int RightClimberChannel = 3; //CHANGE THIS IS TEMPORARY 
+    // public static final int LeftClimberChannel = 2; //CHANGE THIS IS TEMPORARY 
+    // public static final int RightClimberChannel = 3; //CHANGE THIS IS TEMPORARY 
 
     //Motor Levels
     public static double IntakeMotorLevel = 0.85;
     public static double IntakeBackMotorLevel = 0.7;
-    public static double ShooterMotorLowRPM = 1650; //LOW GOAL RPM
-    public static double ShooterMotorHighRPM = 4200; //HIGH GOAL RPM
-    public static double ShooterMotorPadRPM = 5400; //LAUNCHPAD GOAL RPM
-    public static double ShooterBackMotorRPM = -60; //TBD
-    public static double StorageMotorLevel = 0.75;
-    public static double StorageMotorLevelShooting = 0.6; //.5
-    public static double StorageBackMotorLevel = -0.5;
-    public static double KickerMotorLevel = -0.8; //TBD
-    public static double KickerSlowBackMotorLevel = 0.4; //TBD
-    public static double KickerFastBackMotorLevel = 0.7; //TBD
+    // public static double ShooterMotorLowRPM = 1650; //LOW GOAL RPM
+    // public static double ShooterMotorHighRPM = 4200; //HIGH GOAL RPM
+    // public static double ShooterMotorPadRPM = 5400; //LAUNCHPAD GOAL RPM
+    // public static double ShooterBackMotorRPM = -60; //TBD
+    // public static double StorageMotorLevel = 0.75;
+    // public static double StorageMotorLevelShooting = 0.6; //.5
+    // public static double StorageBackMotorLevel = -0.5;
+    // public static double KickerMotorLevel = -0.8; //TBD
+    // public static double KickerSlowBackMotorLevel = 0.4; //TBD
+    // public static double KickerFastBackMotorLevel = 0.7; //TBD
     
     //Motor Stall Currents
     

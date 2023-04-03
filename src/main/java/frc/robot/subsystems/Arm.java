@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -15,7 +16,7 @@ import frc.robot.Constants;
 public class Arm extends SubsystemBase {
   public boolean isActive = true;
   static Arm Instance = null;
-  private WPI_TalonSRX armMotor;
+  public WPI_TalonSRX armMotor;
   private int mode = Constants.IntakeOFF_MODE;
   private boolean deployed = false;
   Encoder m_Encoder;
@@ -26,6 +27,12 @@ public class Arm extends SubsystemBase {
       return;
     }
     armMotor = new WPI_TalonSRX(8);
+    armMotor.configFactoryDefault();
+    armMotor.configContinuousCurrentLimit(20);
+    armMotor.enableCurrentLimit(true);
+    armMotor.configPeakCurrentDuration(150);
+    armMotor.configPeakCurrentLimit(60);
+    armMotor.configOpenloopRamp(0.1);
     //armMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
     //armMotor.setSelectedSensorPosition(0);
 
@@ -43,12 +50,16 @@ public class Arm extends SubsystemBase {
     return Instance;
   }
 
+  public void setArm(ControlMode control, double level) {
+    armMotor.set(control, level);
+  }
+
   public void armInside() {
-    armMotor.set(-0.4);
+    armMotor.set(-0.6);
   }
 
   public void armOutside() {
-    armMotor.set(0.4);
+    armMotor.set(0.6);
   }
 
   public void midCone() {
@@ -67,7 +78,7 @@ public class Arm extends SubsystemBase {
 
   }
 
-  public void setZero() {
+  public void setArmZero() {
     armMotor.set(0);
   }
 

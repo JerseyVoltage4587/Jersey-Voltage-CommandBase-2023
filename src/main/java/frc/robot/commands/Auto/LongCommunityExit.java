@@ -5,7 +5,13 @@
 package frc.robot.commands.Auto;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.Arm.InstantArmInside;
+import frc.robot.commands.Arm.InstantArmOutside;
+import frc.robot.commands.Arm.InstantSetArmZero;
 import frc.robot.commands.DriveBase.MoveDistance;
+import frc.robot.commands.Intake.InstantCubeOut;
+import frc.robot.commands.Intake.InstantSetIntakeZero;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -15,6 +21,16 @@ public class LongCommunityExit extends SequentialCommandGroup {
   public LongCommunityExit() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new MoveDistance(-140));
+    addCommands(
+    new InstantArmOutside(),
+    new WaitCommand(2),
+    new InstantCubeOut(),
+    new WaitCommand(1),
+    new InstantArmInside(),
+    new WaitCommand(0.5),
+    new InstantSetIntakeZero(),
+    new InstantSetArmZero(),
+    new WaitCommand(2),
+    new MoveDistance(180, 0.3));
   }
 }

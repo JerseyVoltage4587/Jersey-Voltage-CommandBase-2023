@@ -6,6 +6,10 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import frc.robot.commands.Arm.*;
+import frc.robot.commands.Auto.LongCommunityExit;
+import frc.robot.commands.Auto.OnlyStation;
+import frc.robot.commands.Auto.ScoreExitAndStation;
+import frc.robot.commands.Auto.ShortCommunityExit;
 import frc.robot.commands.Intake.*;
 import frc.robot.OI.*;
 
@@ -16,6 +20,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 
 import com.revrobotics.CANSparkMax;
@@ -45,10 +50,11 @@ public class Robot extends TimedRobot {
   private static final String kCubeAuto = "cube";
   private static final String kAuto = "auto";
   private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private final SendableChooser<Command> m_chooser = new SendableChooser<>();
   private static PowerDistribution m_PDP;
   DriveBase m_drive;
   OI oi;
+  
   private Command m_autonomousCommand;
 
   /*
@@ -157,14 +163,18 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("mobility", kAuto);
-    m_chooser.addOption("cone and mobility", kConeAuto);
-    m_chooser.addOption("do nothing", kNothingAuto);
-    m_chooser.addOption("cube and mobility", kCubeAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
+    m_chooser.setDefaultOption("Score, Exit, Engage", new ScoreExitAndStation());
+    m_chooser.addOption("Engage", new OnlyStation());
+    m_chooser.addOption("Long Exit", new LongCommunityExit());
+    m_chooser.addOption("Short Exit", new ShortCommunityExit());
+    SmartDashboard.putData("Autos", m_chooser);
 
     CameraServer.startAutomaticCapture();
     CommandScheduler.getInstance().cancelAll();
+
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
 
     /*
      * You will need to change some of these from false to true.
@@ -274,6 +284,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
+    DriveBase.getInstance().teleopInit();
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
+
+    m_autonomousCommand = m_chooser.getSelected();
     CommandScheduler.getInstance().schedule(m_autonomousCommand);
     //zeroDriveSensors();
 
@@ -294,6 +310,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+
+    CommandScheduler.getInstance().run();
 
     // if (m_autoSelected == kNothingAuto) {
     //   setArmMotor(0.0);
@@ -342,6 +360,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     CommandScheduler.getInstance().cancelAll();
+    DriveBase.getInstance().teleopInit();
 
     armMotor.setSelectedSensorPosition(0);
     // zeroDriveSensors();
@@ -357,9 +376,10 @@ boolean lastPressed;
   @Override
   public void teleopPeriodic() {
 
-    DriveBase.getInstance().driveMotors(OI.getInstance().j.getRawAxis(1),OI.getInstance().j.getRawAxis(2));
+    DriveBase.getInstance().toggleMode(OI.getInstance().j.getRawButton(7));
+    DriveBase.getInstance().driveMotors(OI.getInstance().j.getRawAxis(1),OI.getInstance().j.getRawAxis(2), false);
 
-
+    SmartDashboard.putNumber("Arm Current",   Arm.getInstance().armMotor.getStatorCurrent());
     // double armPower;
     // if (j.getRawButton(7)) {
     //   // lower the arm
