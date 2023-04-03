@@ -48,27 +48,15 @@ public final class Constants {
     // public static final int RightWinchMotorCAN_Address = 18;
 
 
-
-
-    //PDP Ports
-    public static final int RightSpark2PDP_Port = 15; //final
-    public static final int RightSpark21PDP_Port = 14; //final
-    public static final int LeftSpark1PDP_Port = 0; //final
-    public static final int LeftSpark11PDP_Port = 1; //final
-    public static final int LeftShooterMotorPDP_Port = 13; //final
-    public static final int RightShooterMotorPDP_Port = 3; //final
-    public static final int StoragePDP_Port = 4; //final
-    public static final int IntakeMotorPDP_Port = 12; //final
-    public static final int KickerMotorPDP_Port = 5; //final
-    public static final int LeftFrontClimberMotorPDP_Port = 2; //final
-    public static final int RightFrontClimberMotorPDP_Port = 13; //final
-    public static final int LeftWinchMotorPDP_Port = 9;
-    public static final int RightWinchMotorPDP_Port = 10;
-    // public static final int LeftBackClimberMotorPDP_Port = ; //TBD
-    // public static final int RightBackClimberMotorPDP_Port = ; //TBD
+    public static final int intakeMotor = 56;
+    public static final int armMotor = 8;
     
-    //Solenoid IDs
-    //public static final int Module_ID = 0;
+    public static final double kP = 0.02;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kF = 0.0313;
+    public static final double kCruiseVelocity = 12000;
+    public static final double kCruiseAcceleration = 12000;
 
     //Solenoid Channel
     // public static final int LeftIntakeChannel = 4; //CHANGE THIS IS TEMPORARY 

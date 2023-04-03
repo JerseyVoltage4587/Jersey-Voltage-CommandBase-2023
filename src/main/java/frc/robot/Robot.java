@@ -41,6 +41,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+
 public class Robot extends TimedRobot {
   /*
    * Autonomous selection options.
@@ -66,11 +67,6 @@ public class Robot extends TimedRobot {
    */
 
   
-  Encoder leftTalonEncoder = new Encoder();
-  Encoder rightTalonEncoder = new Encoder();
-
-  WPI_TalonSRX intakeMotor = new WPI_TalonSRX(56);
-  WPI_TalonSRX armMotor = new WPI_TalonSRX(8);
 
   SlewRateLimiter filter = new SlewRateLimiter(0.5, -0.5, 0);
 
@@ -224,49 +220,12 @@ public class Robot extends TimedRobot {
    * @param turn    Desired turning speed. Positive is counter clockwise from
    *                above.
    */
-  public void setDriveMotors(double forward, double turn) {
-    SmartDashboard.putNumber("drive forward power (%)", forward);
-    SmartDashboard.putNumber("drive turn power (%)", turn);
-
-    /*
-     * positive turn = counter clockwise, so the left side goes backwards
-     */
-    double left = forward - turn;
-    double right = forward + turn;
-
-    SmartDashboard.putNumber("drive left power (%)", left);
-    SmartDashboard.putNumber("drive right power (%)", right);
-
-    // see note above in robotInit about commenting these out one by one to set
-    // directions.
-    
-  }
 
   /**
    * Set the arm output power. Positive is out, negative is in.
    * 
    * @param percent
    */
-  public void setArmMotor(double percent) {
-    /**///arm.set(percent);
-    /**///SmartDashboard.putNumber("arm power (%)", percent);
-    /**///SmartDashboard.putNumber("arm motor current (amps)", arm.getOutputCurrent());
-    /**///SmartDashboard.putNumber("arm motor temperature (C)", arm.getMotorTemperature());
-  }
-
-  /**
-   * Set the arm output power.
-   * 
-   * @param percent desired speed
-   * @param amps current limit
-   */
-  public void setIntakeMotor(double percent, int amps) {
-    /**///intake.set(percent);
-    /**///intake.setSmartCurrentLimit(amps);
-    /**///SmartDashboard.putNumber("intake power (%)", percent);
-    /**///SmartDashboard.putNumber("intake motor current (amps)", intake.getOutputCurrent());
-    /**///SmartDashboard.putNumber("intake motor temperature (C)", intake.getMotorTemperature());
-  }
 
   /**
    * This method is called every 20 ms, no matter the mode. It runs after
@@ -291,21 +250,6 @@ public class Robot extends TimedRobot {
 
     m_autonomousCommand = m_chooser.getSelected();
     CommandScheduler.getInstance().schedule(m_autonomousCommand);
-    //zeroDriveSensors();
-
-    //armMotor.set(0.4);
-    //intakeMotor.set(1);
-    
-        // m_autoSelected = m_chooser.getSelected();
-    // System.out.println("Auto selected: " + m_autoSelected);
-
-    // if (m_autoSelected == kConeAuto) {
-    //   autonomousIntakePower = INTAKE_OUTPUT_POWER;
-    // } else if (m_autoSelected == kCubeAuto) {
-    //   autonomousIntakePower = -INTAKE_OUTPUT_POWER;
-    // }
-
-    // autonomousStartTime = Timer.getFPGATimestamp();
   }
 
   @Override
@@ -345,13 +289,6 @@ public class Robot extends TimedRobot {
     // }
   }
 
-  /**
-   * Used to remember the last game piece picked up to apply some holding power.
-   */
-  static final int CONE = 1;
-  static final int CUBE = 2;
-  static final int NOTHING = 3;
-  int lastGamePiece;
 
   @Override
   public void teleopInit() {
@@ -362,17 +299,11 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().cancelAll();
     DriveBase.getInstance().teleopInit();
 
-    armMotor.setSelectedSensorPosition(0);
-    // zeroDriveSensors();
-    // driveLeftTalon.setNeutralMode(NeutralMode.Brake);
-    // driveLeftVictor.follow(driveLeftTalon);
-    // driveRightTalon.setNeutralMode(NeutralMode.Brake);
-    // driveRightVictor.follow(driveRightTalon);
+    m_arm.armMotor.setSelectedSensorPosition(0);
 
-    lastGamePiece = NOTHING;
   }
-double armEncoder;
-boolean lastPressed;
+
+  
   @Override
   public void teleopPeriodic() {
 

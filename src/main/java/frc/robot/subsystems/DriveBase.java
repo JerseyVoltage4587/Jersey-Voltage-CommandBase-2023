@@ -46,8 +46,6 @@ public class DriveBase extends SubsystemBase {
   private double RightMotorLevel;
   private double partialLeftInches = 0;
   private double partialRightInches = 0;
-  private DriveBaseLoggingData m_loggingData;
-  private AsyncStructuredLogger<DriveBaseLoggingData> m_logger;
   private long m_lastLogTime = 0;
   private String layout = "";
   private double leftTalonOldAmps   = 0;
@@ -98,8 +96,6 @@ public class DriveBase extends SubsystemBase {
     // driveRightTalon.configOpenloopRamp(0.1);
     m_drive = new DifferentialDrive(driveLeftTalon, driveRightTalon);
     m_drive.setSafetyEnabled(false);
-    m_loggingData = new DriveBaseLoggingData();
-    m_logger = new AsyncStructuredLogger<DriveBaseLoggingData>("DriveBase", /*forceUnique=*/false, DriveBaseLoggingData.class);
   }
 
   public static DriveBase getInstance() {

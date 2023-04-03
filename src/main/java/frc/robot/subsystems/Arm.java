@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.OI;
 
 public class Arm extends SubsystemBase {
   public boolean isActive = true;
@@ -36,7 +37,7 @@ public class Arm extends SubsystemBase {
     //armMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
     //armMotor.setSelectedSensorPosition(0);
 
-    m_Encoder = new Encoder(0, 1, true, Encoder.EncodingType.k2X);
+    // m_Encoder = new Encoder(0, 1, true, Encoder.EncodingType.k2X);
   }
 
   public static Arm getInstance() {
@@ -63,19 +64,19 @@ public class Arm extends SubsystemBase {
   }
 
   public void midCone() {
-
+    armMotor.set(ControlMode.MotionMagic, 26000);
   }
 
   public void midCube() {
-
+    armMotor.set(ControlMode.MotionMagic, 25000);
   }
 
   public void highCone() {
-
+    armMotor.set(ControlMode.MotionMagic, 26000);
   }
 
   public void highCube() {
-
+    armMotor.set(ControlMode.MotionMagic, 25000);
   }
 
   public void setArmZero() {
@@ -85,6 +86,5 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Arm Motor", m_Encoder.getDistance());
   }
 }
