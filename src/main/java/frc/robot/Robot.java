@@ -54,8 +54,8 @@ public class Robot extends TimedRobot {
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
   private static PowerDistribution m_PDP;
   DriveBase m_drive;
-  OI oi;
-  
+  OI m_oi;
+  Arm m_arm;
   private Command m_autonomousCommand;
 
   /*
