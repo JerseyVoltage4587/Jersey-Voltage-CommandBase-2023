@@ -10,7 +10,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.Arm.ArmInside;
 import frc.robot.commands.Arm.ArmOutside;
+import frc.robot.commands.Arm.ArmToPosition;
 import frc.robot.commands.Arm.JoyDrive;
+import frc.robot.commands.Arm.SetArmZero;
 import frc.robot.commands.Intake.*;
 import frc.robot.subsystems.DriveBase;
 
@@ -63,6 +65,8 @@ public class OI extends CommandBase {
     kLeftBumper.whileTrue(new ArmOutside());
     kRightBumper.whileTrue(new ArmInside());
     kButtonY.whileTrue(new JoyDrive());
+    kButtonA.whileTrue(new ArmToPosition(5000));
+    kButtonA.onFalse(new SetArmZero());
 
   }
 

@@ -6,11 +6,15 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ArmConstants;
 import frc.robot.Constants;
 import frc.robot.OI;
 
@@ -20,7 +24,7 @@ public class Arm extends SubsystemBase {
   public WPI_TalonSRX armMotor;
   private int mode = Constants.IntakeOFF_MODE;
   private boolean deployed = false;
-  Encoder m_Encoder;
+
   /** Creates a new Arm. */
   
   public Arm() {
@@ -33,10 +37,7 @@ public class Arm extends SubsystemBase {
     armMotor.enableCurrentLimit(true);
     armMotor.configPeakCurrentDuration(150);
     armMotor.configPeakCurrentLimit(60);
-    armMotor.configOpenloopRamp(0.1);
-    //armMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
-    //armMotor.setSelectedSensorPosition(0);
-
+  
     // m_Encoder = new Encoder(0, 1, true, Encoder.EncodingType.k2X);
   }
 
@@ -51,40 +52,130 @@ public class Arm extends SubsystemBase {
     return Instance;
   }
 
+  public void robotInit() {
+		/* setup some followers */
+    armMotor.set(ControlMode.PercentOutput, 0);
+
+		/* Factory default hardware to prevent unexpected behavior */
+		armMotor.configFactoryDefault();
+
+		/* Configure Sensor Source for Pirmary PID */
+		armMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, ArmConstants.kPIDLoopIdx,
+				ArmConstants.kTimeoutMs);
+
+		/* set deadband to super small 0.001 (0.1 %).
+			The default deadband is 0.04 (4 %) */
+		armMotor.configNeutralDeadband(0.001, ArmConstants.kTimeoutMs);
+
+		/**
+		 * Configure Talon SRX Output and Sensor direction accordingly Invert Motor to
+		 * have green LEDs when driving Talon Forward / Requesting Postiive Output Phase
+		 * sensor to have positive increment when driving Talon Forward (Green LED)
+		 */
+		armMotor.setSensorPhase(true);
+		armMotor.setInverted(false);
+
+		/* Set relevant frame periods to be at least as fast as periodic rate */
+		armMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, ArmConstants.kTimeoutMs);
+		armMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, ArmConstants.kTimeoutMs);
+
+		/* Set the peak and nominal outputs */
+		armMotor.configNominalOutputForward(0, ArmConstants.kTimeoutMs);
+		armMotor.configNominalOutputReverse(0, ArmConstants.kTimeoutMs);
+		armMotor.configPeakOutputForward(1, ArmConstants.kTimeoutMs);
+		armMotor.configPeakOutputReverse(-1, ArmConstants.kTimeoutMs);
+
+		/* Set Motion Magic gains in slot0 - see documentation */
+		armMotor.selectProfileSlot(ArmConstants.kSlotIdx, ArmConstants.kPIDLoopIdx);
+		armMotor.config_kF(ArmConstants.kSlotIdx, ArmConstants.kGains.kF, ArmConstants.kTimeoutMs);
+		armMotor.config_kP(ArmConstants.kSlotIdx, ArmConstants.kGains.kP, ArmConstants.kTimeoutMs);
+		armMotor.config_kI(ArmConstants.kSlotIdx, ArmConstants.kGains.kI, ArmConstants.kTimeoutMs);
+		armMotor.config_kD(ArmConstants.kSlotIdx, ArmConstants.kGains.kD, ArmConstants.kTimeoutMs);
+
+		/* Set acceleration and vcruise velocity - see documentation */
+		armMotor.configMotionCruiseVelocity(6000, ArmConstants.kTimeoutMs);
+		armMotor.configMotionAcceleration(6000, ArmConstants.kTimeoutMs);
+    armMotor.configMotionSCurveStrength(ArmConstants.kSmooth);
+
+    armMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+
+		/* Zero the sensor once on robot boot up */
+		armMotor.setSelectedSensorPosition(0, ArmConstants.kPIDLoopIdx, ArmConstants.kTimeoutMs);
+	}
+  
   public void setArm(ControlMode control, double level) {
     armMotor.set(control, level);
   }
 
+  boolean closedLoop = false;
+
+  private void checkOLRamp(boolean newClosedLoop)
+  {
+    if (newClosedLoop != closedLoop)
+    {
+      if (newClosedLoop)
+        armMotor.configOpenloopRamp(0);
+      else
+        armMotor.configOpenloopRamp(0);
+    }
+    closedLoop = newClosedLoop;
+  }
+
+  public boolean atReverseLimit()
+  {
+    return armMotor.isRevLimitSwitchClosed() > 0;
+  }
+
   public void armInside() {
-    armMotor.set(-0.6);
+    checkOLRamp(false);
+  armMotor.set(ControlMode.PercentOutput, -0.6);
   }
 
   public void armOutside() {
-    armMotor.set(0.6);
+    checkOLRamp(false);
+    armMotor.set(ControlMode.PercentOutput, 0.6);
   }
 
   public void midCone() {
+    checkOLRamp(true);
     armMotor.set(ControlMode.MotionMagic, 26000);
   }
 
   public void midCube() {
+    checkOLRamp(true);
     armMotor.set(ControlMode.MotionMagic, 25000);
   }
 
   public void highCone() {
+    checkOLRamp(true);
     armMotor.set(ControlMode.MotionMagic, 26000);
   }
 
   public void highCube() {
+    checkOLRamp(true);
     armMotor.set(ControlMode.MotionMagic, 25000);
   }
 
+  public void gotoPosition(double position, boolean adjust) {
+    checkOLRamp(true);
+    double adj = adjust ? OI.getInstance().k.getRawAxis(1) : 0;
+    adj *= ArmConstants.adjScale;
+
+    armMotor.set(ControlMode.MotionMagic, position - adj);
+    SmartDashboard.putNumber("Arm Error", armMotor.getClosedLoopError(ArmConstants.kPIDLoopIdx));
+
+  }
+
   public void setArmZero() {
-    armMotor.set(0);
+    checkOLRamp(false);
+    armMotor.set(ControlMode.PercentOutput, 0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Arm Traj Pos", armMotor.getActiveTrajectoryPosition());
+    SmartDashboard.putNumber("Arm Act Pos", armMotor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Arm Error", armMotor.getClosedLoopError());
   }
 }

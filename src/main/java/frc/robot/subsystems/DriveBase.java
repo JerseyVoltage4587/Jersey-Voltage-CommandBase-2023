@@ -470,9 +470,9 @@ public class DriveBase extends SubsystemBase {
 
   private ControlMode mode = ControlMode.Velocity;
 
-  public void toggleMode(boolean velMode)
+  public void toggleMode(boolean percentMode)
   {
-    mode = !velMode ? ControlMode.Velocity : ControlMode.PercentOutput;
+    mode = !percentMode ? ControlMode.Velocity : ControlMode.PercentOutput;
   }
 
       SlewRateLimiter throttleSlew = new SlewRateLimiter(2);
