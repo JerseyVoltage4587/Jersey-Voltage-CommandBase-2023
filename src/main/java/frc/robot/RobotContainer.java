@@ -9,6 +9,10 @@ import frc.robot.commands.Auto.LongCommunityExit;
 import frc.robot.commands.Auto.OnlyStation;
 import frc.robot.commands.Auto.ScoreExitAndStation;
 import frc.robot.commands.Auto.ShortCommunityExit;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.AutoBalance;
+import frc.robot.subsystems.DriveBase;
+import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,7 +35,13 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     m_chooser = new SendableChooser<>();
+    var d = DriveBase.getInstance();
+    var a = Arm.getInstance();
+    var i = Intake.getInstance();
+    var b = AutoBalance.getInstance();
+    
     configureBindings();
+
   }
 
   /**

@@ -6,7 +6,7 @@ package frc.robot.commands.Auto;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.Arm.ArmInside;
+import frc.robot.commands.Arm.ArmInsideToLimit;
 import frc.robot.commands.Arm.ArmOutside;
 import frc.robot.commands.Arm.InstantArmInside;
 import frc.robot.commands.Arm.InstantArmOutside;

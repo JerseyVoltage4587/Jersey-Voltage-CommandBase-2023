@@ -6,12 +6,16 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.Arm.ArmInside;
 import frc.robot.commands.Arm.ArmOutside;
+import frc.robot.commands.Arm.ArmToPosition;
 import frc.robot.commands.Arm.JoyDrive;
+import frc.robot.commands.Arm.SetArmZero;
 import frc.robot.commands.Intake.*;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 
 public class OI extends CommandBase {
@@ -63,6 +67,9 @@ public class OI extends CommandBase {
     kLeftBumper.whileTrue(new ArmOutside());
     kRightBumper.whileTrue(new ArmInside());
     kButtonY.whileTrue(new JoyDrive());
+    kButtonA.whileTrue(new ArmToPosition(5000)).onFalse(new SetArmZero());
+
+    kButtonB.toggleOnTrue(new StartEndCommand(() -> Arm.getInstance().toggleRecord(true), () -> Arm.getInstance().toggleRecord(true))); 
 
   }
 

@@ -10,6 +10,7 @@ import frc.robot.commands.Auto.LongCommunityExit;
 import frc.robot.commands.Auto.OnlyStation;
 import frc.robot.commands.Auto.ScoreExitAndStation;
 import frc.robot.commands.Auto.ShortCommunityExit;
+import frc.robot.commands.DriveBase.DriveJoystick;
 import frc.robot.commands.Intake.*;
 import frc.robot.OI.*;
 
@@ -159,6 +160,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    m_oi = OI.getInstance();
     m_chooser.setDefaultOption("Score, Exit, Engage", new ScoreExitAndStation());
     m_chooser.addOption("Engage", new OnlyStation());
     m_chooser.addOption("Long Exit", new LongCommunityExit());
@@ -172,60 +174,12 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    /*
-     * You will need to change some of these from false to true.
-     * 
-     * In the setDriveMotors method, comment out all but 1 of the 4 calls
-     * to the set() methods. Push the joystick forward. Reverse the motor
-     * if it is going the wrong way. Repeat for the other 3 motors.
-     */
-    // driveLeftTalon.setCANTimeout(100);
-    // driveLeftVictor.follow(driveLeftTalon);
-    // driveRightTalon.setCANTimeout(100);
-    // driveRightVictor.follow(driveRightTalon);
-    // driveLeftTalon.enableCurrentLimit(true);
-    // driveLeftTalon.configContinuousCurrentLimit(30);
-    // driveLeftVictor.follow(driveLeftTalon);
-    // driveRightTalon.enableCurrentLimit(true);
-    // driveRightTalon.configContinuousCurrentLimit(30);
-    // driveRightVictor.follow(driveRightTalon);
-    // driveLeftTalon.setOpenLoopRampRate(0.1);
-    // driveLeftVictor.setOpenLoopRampRate(0.1);
-    // driveRightTalon.setOpenLoopRampRate(0.1);
-    // driveRightVictor.setOpenLoopRampRate(0.1);
-    // driveLeftTalon.setInverted(false);
-    // driveLeftVictor.setInverted(false);
-    // driveRightTalon.setInverted(false);
-    // driveRightVictor.setInverted(false);
-    //driveLeftTalon.
+    DriveBase.getInstance().setDefaultCommand(new DriveJoystick());
     
-    
-    /*
-     * Set the arm and intake to brake mode to help hold position.
-     * If either one is reversed, change that here too. Arm out is defined
-     * as positive, arm in is negative.
-     */
-    /**///arm.setInverted(true);
-    /**///arm.setIdleMode(IdleMode.kBrake);
-    /**///arm.setSmartCurrentLimit(ARM_CURRENT_LIMIT_A);
-    /**///intake.setInverted(false);
-    /**///intake.setIdleMode(IdleMode.kBrake);
+    Arm.getInstance().robotInit();
+
   }
 
-  /**
-   * Calculate and set the power to apply to the left and right
-   * drive motors.
-   * 
-   * @param forward Desired forward speed. Positive is forward.
-   * @param turn    Desired turning speed. Positive is counter clockwise from
-   *                above.
-   */
-
-  /**
-   * Set the arm output power. Positive is out, negative is in.
-   * 
-   * @param percent
-   */
 
   /**
    * This method is called every 20 ms, no matter the mode. It runs after
@@ -298,7 +252,6 @@ public class Robot extends TimedRobot {
     }
     CommandScheduler.getInstance().cancelAll();
     DriveBase.getInstance().teleopInit();
-
     m_arm.armMotor.setSelectedSensorPosition(0);
 
   }
@@ -308,7 +261,6 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     DriveBase.getInstance().toggleMode(OI.getInstance().j.getRawButton(7));
-    DriveBase.getInstance().driveMotors(OI.getInstance().j.getRawAxis(1),OI.getInstance().j.getRawAxis(2), false);
 
     SmartDashboard.putNumber("Arm Current",   Arm.getInstance().armMotor.getStatorCurrent());
     // double armPower;
