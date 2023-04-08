@@ -32,7 +32,7 @@ import frc.robot.DriveConstants;
 import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.util.AsyncStructuredLogger;
-import frc.robot.util.Gyro;
+// import frc.robot.util.Gyro;
 
 public class DriveBase extends SubsystemBase {
   private boolean m_isActive = true;
@@ -440,10 +440,10 @@ public class DriveBase extends SubsystemBase {
     }
 		driveLeftTalon.getSensorCollection().setQuadraturePosition(0, DriveConstants.kTimeoutMs);
 		driveRightTalon.getSensorCollection().setQuadraturePosition(0, DriveConstants.kTimeoutMs);
-    if (gyro) {
-      Gyro.getInstance();
-      Gyro.reset();
-    }
+    // if (gyro) {
+    //   Gyro.getInstance();
+    //   Gyro.reset();
+    // }
   }
 
   public void arcadeDrive(double forward, double turn) {
@@ -485,7 +485,7 @@ public class DriveBase extends SubsystemBase {
     double scl = (mode == ControlMode.Velocity) ? 3200 : 1;
     double forwardLim = auton ? throttleSlewAuto.calculate(forward) : throttleSlew.calculate(forward);
     if(slowDrive) {
-      forwardLim = -0.2;
+      forwardLim = -0.15;
     };
     double turnLim = turnSlew.calculate( slowTurn && ! auton ? turn / 2 : turn);
     double left = (forwardLim - turnLim);

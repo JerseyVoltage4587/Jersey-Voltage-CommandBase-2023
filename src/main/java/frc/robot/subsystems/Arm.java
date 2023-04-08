@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import java.io.Console;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
@@ -40,7 +41,7 @@ public class Arm extends SubsystemBase {
     armMotor = new WPI_TalonSRX(8);
     armMotor.configFactoryDefault();
     armMotor.configContinuousCurrentLimit(20);
-    armMotor.enableCurrentLimit(true);
+    armMotor.enableCurrentLimit(false);
     armMotor.configPeakCurrentDuration(150);
     armMotor.configPeakCurrentLimit(60);
     
@@ -102,23 +103,55 @@ public class Arm extends SubsystemBase {
 		armMotor.config_kD(ArmConstants.kSlotIdx, ArmConstants.kGains.kD, ArmConstants.kTimeoutMs);
 
 		/* Set acceleration and vcruise velocity - see documentation */
-		armMotor.configMotionCruiseVelocity(6000, ArmConstants.kTimeoutMs);
-		armMotor.configMotionAcceleration(6000, ArmConstants.kTimeoutMs);
+		armMotor.configMotionCruiseVelocity(ArmConstants.kCruiseVelocity, ArmConstants.kTimeoutMs);
+		armMotor.configMotionAcceleration(ArmConstants.kCruiseAccel, ArmConstants.kTimeoutMs);
     armMotor.configMotionSCurveStrength(ArmConstants.kSmooth);
 
     int closedLoopTimeMs = 2;
 		armMotor.configClosedLoopPeriod(0, closedLoopTimeMs, ArmConstants.kTimeoutMs);
 
     armMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
-
+    armMotor.configClearPositionOnLimitR(true, ArmConstants.kTimeoutMs);
 		/* Zero the sensor once on robot boot up */
 		armMotor.setSelectedSensorPosition(0, ArmConstants.kPIDLoopIdx, ArmConstants.kTimeoutMs);
-	}
+    FFTable.addSample(0.0,0.0);
+    FFTable.addSample(10058.0, 0.11827956989247312);
+    FFTable.addSample(20196.0, 0.1348973607038123);
+    FFTable.addSample(30035.0, 0.16911045943304007);
+    FFTable.addSample(40036.0, 0.2072336265884653);
+    FFTable.addSample(50074.0, 0.23069403714565004);
+    FFTable.addSample(60304.0, 0.24633431085043989);
+    FFTable.addSample(70278.0, 0.26295210166177907);
+    FFTable.addSample(80286.0, 0.2727272727272727);
+    FFTable.addSample(90212.0, 0.27956989247311825);
+    FFTable.addSample(100069.0, 0.2873900293255132);
+    FFTable.addSample(110013.0, 0.29423264907135877);
+    FFTable.addSample(120431.0, 0.3040078201368524);
+    FFTable.addSample(130323.0, 0.31573802541544477);
+    FFTable.addSample(140043.0, 0.33235581622678395);
+    FFTable.addSample(150125.0, 0.44086021505376344);
+    FFTable.addSample(160011.0, 0.4506353861192571);
+    FFTable.addSample(170191.0, 0.4613880742913001);
+    FFTable.addSample(180125.0, 0.544477028347996);
+    FFTable.addSample(190438.0, 0.5532746823069403);
+     }
   
   public void setArm(ControlMode control, double level) {
     armMotor.set(control, level);
   }
 
+  boolean homed = false;
+
+  public boolean getHomed()
+  {
+    return homed;
+  }
+  
+  public void setHomed(boolean val)
+  {
+    homed = val;
+  }
+  
   boolean closedLoop = false;
 
   private void checkOLRamp(boolean newClosedLoop)
@@ -140,12 +173,13 @@ public class Arm extends SubsystemBase {
 
   public void armInside() {
     checkOLRamp(false);
-  armMotor.set(ControlMode.PercentOutput, -0.6);
+    double sensor = armMotor.getSelectedSensorPosition();
+    armMotor.set(ControlMode.PercentOutput, sensor < 40000 ? ArmConstants.kRetract / 1.25 : ArmConstants.kRetract);
   }
 
   public void armOutside() {
     checkOLRamp(false);
-    armMotor.set(ControlMode.PercentOutput, 0.6);
+    armMotor.set(ControlMode.PercentOutput, ArmConstants.kExtend);
   }
 
   public void midCone() {
@@ -173,12 +207,12 @@ public class Arm extends SubsystemBase {
     double adj = adjust ? OI.getInstance().k.getRawAxis(1) : 0;
     adj *= ArmConstants.adjScale;
 
-    armMotor.set(ControlMode.MotionMagic, position - adj);
+    armMotor.set(ControlMode.MotionMagic, Math.max(0, Math.min(position - adj, 200000))    , DemandType.ArbitraryFeedForward, FFTable.getSample(armMotor.getSelectedSensorPosition()).orElse(0.0) * 0.75);
     SmartDashboard.putNumber("Arm Error", armMotor.getClosedLoopError(ArmConstants.kPIDLoopIdx));
 
   }
 
-  private double nextValue = 500;
+  private double nextValue = 10000;
   private boolean recordTable = false;
 
   public void toggleRecord(boolean value)
@@ -188,7 +222,8 @@ public class Arm extends SubsystemBase {
       recordTable = value;
       if (recordTable)
       {
-        nextValue = 500;
+        System.out.println("FFTable Cleared");
+        nextValue = 10000;
         FFTable.clear();
       }
       else
@@ -208,15 +243,24 @@ public class Arm extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     double sensor = armMotor.getSelectedSensorPosition();
+    double motOut = armMotor.getMotorOutputPercent();
     SmartDashboard.putNumber("Arm Traj Pos", armMotor.getActiveTrajectoryPosition());
     SmartDashboard.putNumber("Arm Act Pos", sensor);
     SmartDashboard.putNumber("Arm Error", armMotor.getClosedLoopError());
+    SmartDashboard.putNumber("Arm Output", motOut);
+    SmartDashboard.putNumber("Arm OutV", armMotor.getMotorOutputVoltage());
+
+    if (atReverseLimit())
+    {
+      homed = true;
+    }
 
     if (recordTable)
       if (sensor > nextValue)
       {
+        System.out.println("Recorded: " + sensor + ", " + motOut);
         FFTable.addSample(sensor, armMotor.getMotorOutputPercent());
-        nextValue += 1000;
+        nextValue += 10000;
       }
   }
 }

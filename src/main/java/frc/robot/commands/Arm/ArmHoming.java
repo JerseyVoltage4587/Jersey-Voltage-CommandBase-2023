@@ -16,6 +16,6 @@ public class ArmHoming extends SequentialCommandGroup {
   public ArmHoming() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new ArmInsideToLimit().withTimeout(1), new WaitCommand(0.1), new ArmToPosition(ArmConstants.kResting));
+    addCommands(new ArmToPosition(20000), new ArmInsideToLimit().withTimeout(2), new WaitCommand(0.1), new ArmToPosition(ArmConstants.kResting));
   }
 }

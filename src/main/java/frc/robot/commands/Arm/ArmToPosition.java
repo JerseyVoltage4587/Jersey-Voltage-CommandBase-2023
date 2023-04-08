@@ -21,7 +21,8 @@ public class ArmToPosition extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {   
-    Arm.getInstance().gotoPosition(m_position, false);
+    if (Arm.getInstance().getHomed())
+      Arm.getInstance().gotoPosition(m_position, false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -38,6 +39,6 @@ public class ArmToPosition extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(Arm.getInstance().armMotor.getActiveTrajectoryPosition() - m_position) < 1;
+    return !Arm.getInstance().getHomed() || Math.abs(Arm.getInstance().armMotor.getActiveTrajectoryPosition() - m_position) < 1;
   }
 }

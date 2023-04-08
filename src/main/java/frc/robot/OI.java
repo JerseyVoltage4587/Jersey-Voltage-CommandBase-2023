@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.Arm.ArmAdjustPosition;
+import frc.robot.commands.Arm.ArmFFTest;
+import frc.robot.commands.Arm.ArmHoming;
 import frc.robot.commands.Arm.ArmInside;
 import frc.robot.commands.Arm.ArmOutside;
 import frc.robot.commands.Arm.ArmToPosition;
@@ -62,14 +65,15 @@ public class OI extends CommandBase {
 
     kLeftTrigger.whileTrue(new CubeIn());
     kRightTrigger.whileTrue(new CubeOut());
-    kMinusButton.onTrue(new HoldCone());
-    kPlusButton.onTrue(new HoldCube());
+    kButtonA.whileTrue(new HoldCone());
+    // kPlusButton.onTrue(new HoldCube());
     kLeftBumper.whileTrue(new ArmOutside());
     kRightBumper.whileTrue(new ArmInside());
-    kButtonY.whileTrue(new JoyDrive());
-    kButtonA.whileTrue(new ArmToPosition(5000)).onFalse(new SetArmZero());
+    kButtonX.whileTrue(new ArmAdjustPosition(ArmConstants.kHighCube)).onFalse(new ArmAdjustPosition(ArmConstants.kResting));
+    kButtonY.whileTrue(new ArmAdjustPosition(ArmConstants.kMidCube)).onFalse(new ArmAdjustPosition(ArmConstants.kResting));
+    kButtonB.whileTrue(new ArmHoming()).onFalse(new ArmAdjustPosition(ArmConstants.kResting));
 
-    kButtonB.toggleOnTrue(new StartEndCommand(() -> Arm.getInstance().toggleRecord(true), () -> Arm.getInstance().toggleRecord(true))); 
+    // kButtonB.whileTrue(new ArmFFTest()); 
 
   }
 

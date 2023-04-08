@@ -31,6 +31,6 @@ public class LongCommunityExit extends SequentialCommandGroup {
     new InstantSetIntakeZero(),
     new InstantSetArmZero(),
     new WaitCommand(2),
-    new MoveDistance(180, 0.3));
+    new MoveDistance(250, 0.3));
   }
 }

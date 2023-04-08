@@ -38,7 +38,12 @@
       }
       return Instance;
     }
- 
+    
+    public double getCurrent() {
+      return intakeMotor.getSupplyCurrent();
+
+      
+    }
     //Cone out/Cube in
     //button 7
     public void cubeIn() {
@@ -55,7 +60,7 @@
     }
     //Hold cone
     public void holdCone() {
-     intakeMotor.set(-0.25);
+     intakeMotor.set(-0.15);
     }
 
     public void setIntakeZero() {
@@ -81,6 +86,7 @@
     public void periodic() {
        //This method will be called once per scheduler run
       SmartDashboard.putNumber("IntakeMotorLevel", getIntakeMotorLevel());
+      SmartDashboard.putNumber("Intake Current", getCurrent());
  
       
     }

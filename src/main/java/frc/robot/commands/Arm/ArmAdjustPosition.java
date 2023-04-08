@@ -18,13 +18,13 @@ public class ArmAdjustPosition extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {   
-    Arm.getInstance().gotoPosition(m_position, false);
+    Arm.getInstance().gotoPosition(m_position, true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Arm.getInstance().gotoPosition(m_position, false);
+    Arm.getInstance().gotoPosition(m_position, true);
   }
 
   // Called once the command ends or is interrupted.

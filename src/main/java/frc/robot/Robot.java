@@ -9,6 +9,7 @@ import frc.robot.commands.Arm.*;
 import frc.robot.commands.Auto.LongCommunityExit;
 import frc.robot.commands.Auto.OnlyStation;
 import frc.robot.commands.Auto.ScoreExitAndStation;
+import frc.robot.commands.Auto.ScoreOnly;
 import frc.robot.commands.Auto.ShortCommunityExit;
 import frc.robot.commands.DriveBase.DriveJoystick;
 import frc.robot.commands.Intake.*;
@@ -54,9 +55,7 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
   private static PowerDistribution m_PDP;
-  DriveBase m_drive;
   OI m_oi;
-  Arm m_arm;
   private Command m_autonomousCommand;
 
   /*
@@ -165,6 +164,7 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("Engage", new OnlyStation());
     m_chooser.addOption("Long Exit", new LongCommunityExit());
     m_chooser.addOption("Short Exit", new ShortCommunityExit());
+    m_chooser.addOption("Cube Only", new ScoreOnly());
     SmartDashboard.putData("Autos", m_chooser);
 
     CameraServer.startAutomaticCapture();
@@ -252,8 +252,8 @@ public class Robot extends TimedRobot {
     }
     CommandScheduler.getInstance().cancelAll();
     DriveBase.getInstance().teleopInit();
-    m_arm.armMotor.setSelectedSensorPosition(0);
-
+    Arm.getInstance().armMotor.setSelectedSensorPosition(0);
+    CommandScheduler.getInstance().schedule(new ArmHoming());
   }
 
   

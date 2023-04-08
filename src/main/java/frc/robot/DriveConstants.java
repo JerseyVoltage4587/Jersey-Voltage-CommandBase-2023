@@ -51,7 +51,7 @@ public class DriveConstants {
 	public final static Gains kGains_Distanc = new Gains( 0.1, 0.0,  0.0, 1023.0/3850.0,  100,  0.50 );
 	public final static Gains kGains_Turning = new Gains( 2.0, 0.0,  4.0, 0.0,       200,  1.00 );
 	public final static Gains kGains_TurngMM = new Gains( 2.0, 0.0,  4.0, 0.0,       200,  1.00 );
-	public final static Gains kGains_Velocit = new Gains( 1.0, 0.0,  0.0, 1023.0/3500.0,  300,  1.00 );
+	public final static Gains kGains_Velocit = new Gains( 1.0, 0.0,  20.0, 1023.0/3500.0,  300,  1.00 );
 	public final static Gains kGains_MotProf = new Gains( 1.0, 0.0,  0.0, 1023.0/3500.0,  400,  1.00 );
 	
 	/** ---- Flat constants, you should not need to change these ---- */
